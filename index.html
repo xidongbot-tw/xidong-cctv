@@ -1,0 +1,585 @@
+<!DOCTYPE html>
+<!-- GitHub Pages static site. Map image is stored in assets/cctv-map.png. -->
+<html lang="zh-Hant">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>汐東線 CCTV 即時影像</title>
+
+  <style>
+    :root {
+      --blue: #1d4ed8;
+      --navy: #14244f;
+      --bg: #f6f8fc;
+      --text: #172033;
+      --muted: #64748b;
+      --border: #dbe3ef;
+      --orange: #f97316;
+      --green: #22c55e;
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      font-family: Arial, "Microsoft JhengHei", "Noto Sans TC", sans-serif;
+      background: var(--bg);
+      color: var(--text);
+    }
+
+    .topbar {
+      height: 64px;
+      background: white;
+      border-bottom: 1px solid #e5e7eb;
+      display: flex;
+      align-items: center;
+      padding: 0 38px;
+      justify-content: space-between;
+      box-shadow: 0 1px 8px rgba(15, 23, 42, 0.05);
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .brand-icon {
+      width: 38px;
+      height: 38px;
+      border-radius: 12px;
+      background: var(--blue);
+      color: white;
+      display: grid;
+      place-items: center;
+      font-size: 20px;
+      box-shadow: 0 8px 18px rgba(29, 78, 216, 0.28);
+    }
+
+    .brand-title {
+      font-weight: 800;
+      font-size: 18px;
+      line-height: 1.1;
+    }
+
+    .brand-subtitle {
+      font-size: 11px;
+      color: var(--muted);
+      margin-top: 3px;
+    }
+
+    .nav {
+      display: flex;
+      align-items: center;
+      gap: 30px;
+      font-size: 15px;
+      color: #475569;
+    }
+
+    .nav span {
+      white-space: nowrap;
+    }
+
+    .nav .active-pill {
+      min-width: 120px;
+      height: 34px;
+      border-radius: 8px;
+      background: var(--blue);
+      box-shadow: 0 8px 16px rgba(29, 78, 216, 0.24);
+
+      display: flex;
+      align-items: center;
+      justify-content: center;
+
+      color: white;
+      font-size: 14px;
+      font-weight: 700;
+    }
+
+    .hero {
+      background: var(--navy);
+      color: white;
+      padding: 50px 42px 54px;
+    }
+
+    .hero-inner {
+      max-width: 1220px;
+      margin: 0 auto;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 24px;
+    }
+
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 7px 14px;
+      border-radius: 999px;
+      border: 1px solid rgba(255,255,255,0.22);
+      background: rgba(255,255,255,0.08);
+      font-size: 13px;
+      font-weight: 700;
+      margin-bottom: 18px;
+    }
+
+    .badge-dot {
+      width: 10px;
+      height: 10px;
+      background: #4ade80;
+      border-radius: 999px;
+      box-shadow: 0 0 0 5px rgba(74,222,128,0.12);
+    }
+
+    .hero h1 {
+      margin: 0;
+      font-size: 48px;
+      line-height: 1.12;
+      letter-spacing: 0.02em;
+    }
+
+    .hero p {
+      max-width: 700px;
+      margin: 18px 0 0;
+      line-height: 1.8;
+      color: #dbeafe;
+    }
+
+    .content {
+      max-width: 1220px;
+      margin: 34px auto 60px;
+      padding: 0 38px;
+      display: grid;
+      grid-template-columns: 280px minmax(0, 1fr);
+      gap: 26px;
+      align-items: start;
+    }
+
+    .card {
+      background: white;
+      border: 1px solid var(--border);
+      border-radius: 18px;
+      box-shadow: 0 8px 24px rgba(15,23,42,0.05);
+    }
+
+    .side-card {
+      padding: 20px;
+    }
+
+    .card-title {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-weight: 800;
+      margin-bottom: 8px;
+    }
+
+    .card-title .orange {
+      color: var(--orange);
+      font-size: 18px;
+    }
+
+    .desc {
+      font-size: 13px;
+      color: #475569;
+      margin-bottom: 16px;
+      line-height: 1.6;
+    }
+
+    .camera-list {
+      display: grid;
+      gap: 10px;
+    }
+
+    .camera-item {
+      border: 1px solid #d6e0ef;
+      border-radius: 12px;
+      padding: 13px 14px;
+      display: grid;
+      grid-template-columns: 42px 1fr 20px;
+      align-items: center;
+      gap: 12px;
+      text-decoration: none;
+      color: inherit;
+      transition: .2s ease;
+      background: white;
+    }
+
+    .camera-item:hover {
+      border-color: var(--blue);
+      transform: translateY(-2px);
+      box-shadow: 0 10px 20px rgba(29,78,216,0.12);
+      background: #f8fbff;
+    }
+
+    .mini-circle {
+      width: 36px;
+      height: 36px;
+      border-radius: 999px;
+      border: 2px solid #0f172a;
+      display: grid;
+      place-items: center;
+      color: #dc2626;
+      font-weight: 800;
+      background: #fff;
+    }
+
+    .camera-name {
+      font-weight: 800;
+      font-size: 14px;
+    }
+
+    .camera-detail {
+      color: #475569;
+      font-size: 12px;
+      line-height: 1.4;
+      margin-top: 3px;
+    }
+
+    .map-card {
+      overflow: hidden;
+      padding: 18px;
+    }
+
+    .map-head {
+      display: flex;
+      align-items: start;
+      justify-content: space-between;
+      margin-bottom: 12px;
+    }
+
+    .map-head h2 {
+      margin: 0;
+      font-size: 18px;
+    }
+
+    .map-head p {
+      margin: 5px 0 0;
+      color: #475569;
+      font-size: 13px;
+    }
+
+    .live-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 5px 12px;
+      border-radius: 999px;
+      background: #dcfce7;
+      color: #16a34a;
+      font-size: 12px;
+      font-weight: 800;
+    }
+
+    .live-pill::before {
+      content: "";
+      width: 7px;
+      height: 7px;
+      border-radius: 999px;
+      background: #22c55e;
+      animation: blink 1.2s infinite;
+    }
+
+    @keyframes blink {
+      0%, 100% { opacity: 1; }
+      50% { opacity: .25; }
+    }
+
+    .map-wrap {
+      position: relative;
+      width: 100%;
+      border-radius: 2px;
+      overflow: hidden;
+      background: #020617;
+    }
+
+    .map-wrap img {
+      display: block;
+      width: 100%;
+      height: auto;
+    }
+
+    .click-zone {
+      position: absolute;
+      width: 11%;
+      aspect-ratio: 1;
+      transform: translate(-50%, -50%);
+      border-radius: 999px;
+      z-index: 10;
+      text-decoration: none;
+    }
+
+    .camera-bubble {
+      position: absolute;
+      left: 50%;
+      top: -32px;
+      transform: translateX(-50%) scale(.9);
+      opacity: 0;
+      pointer-events: none;
+      white-space: nowrap;
+      background: white;
+      color: #0f172a;
+      border-radius: 999px;
+      padding: 8px 12px;
+      font-size: 13px;
+      font-weight: 800;
+      box-shadow: 0 12px 24px rgba(15,23,42,.24);
+      transition: .18s ease;
+      z-index: 4;
+    }
+
+    .camera-bubble::before {
+      content: "📹";
+      margin-right: 6px;
+    }
+
+    .click-zone:hover .camera-bubble {
+      opacity: 1;
+      transform: translateX(-50%) scale(1);
+      top: -42px;
+    }
+
+    .click-zone::before {
+      content: "📹";
+      position: absolute;
+      right: -8px;
+      top: -10px;
+      width: 34px;
+      height: 34px;
+      border-radius: 999px;
+      background: #ffffff;
+      display: grid;
+      place-items: center;
+      font-size: 18px;
+      box-shadow: 0 10px 22px rgba(15,23,42,.28);
+      opacity: 0;
+      transform: scale(.5) rotate(-12deg);
+      transition: .2s ease;
+      z-index: 3;
+    }
+
+    .click-zone:hover::before {
+      opacity: 1;
+      transform: scale(1.15) rotate(8deg);
+    }
+
+    .click-zone::after {
+      content: "";
+      position: absolute;
+      inset: -12px;
+      border-radius: 999px;
+
+      border: 4px solid rgba(59,130,246,.9);
+
+      box-shadow:
+        0 0 0 10px rgba(59,130,246,.22),
+        0 0 30px rgba(59,130,246,.45);
+
+      opacity: 0;
+      transform: scale(.7);
+      transition: .25s ease;
+      z-index: 1;
+    }
+
+    .click-zone:hover::after {
+      opacity: 1;
+      transform: scale(1);
+    }
+
+    .zone-2 {
+      left: 15.2%;
+      top: 18.2%;
+    }
+
+    .zone-11 {
+      left: 54.7%;
+      top: 86.3%;
+    }
+
+    .map-note {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      color: #334155;
+      font-size: 13px;
+      margin-top: 12px;
+    }
+
+    .info-dot {
+      width: 18px;
+      height: 18px;
+      border-radius: 999px;
+      background: #2563eb;
+      color: white;
+      display: grid;
+      place-items: center;
+      font-size: 12px;
+      font-weight: 800;
+      flex: 0 0 auto;
+    }
+
+    footer {
+      background: #1e293b;
+      color: white;
+      padding: 28px 38px;
+      margin-top: 50px;
+    }
+
+    .footer-inner {
+      max-width: 1220px;
+      margin: 0 auto;
+      display: grid;
+      grid-template-columns: 1fr 1fr 1fr;
+      gap: 18px;
+      align-items: end;
+      font-size: 12px;
+      color: #cbd5e1;
+    }
+
+    .footer-title {
+      font-weight: 800;
+      color: white;
+      margin-bottom: 6px;
+      font-size: 13px;
+    }
+
+    .footer-center {
+      text-align: left;
+    }
+
+    @media (max-width: 900px) {
+      .topbar {
+        padding: 0 16px;
+      }
+
+      .nav {
+        display: none;
+      }
+
+      .hero {
+        padding: 34px 18px;
+      }
+
+      .hero-inner {
+        display: block;
+      }
+
+      .hero h1 {
+        font-size: 34px;
+      }
+
+      .content {
+        grid-template-columns: 1fr;
+        padding: 0 14px;
+        margin-top: 18px;
+      }
+
+      .footer-inner {
+        grid-template-columns: 1fr;
+        text-align: left;
+      }
+
+      .footer-center {
+        text-align: left;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <header class="topbar">
+    <div class="brand">
+      <div class="brand-icon">🚇</div>
+      <div>
+        <div class="brand-title">新北捷運汐東線</div>
+        <div class="brand-subtitle">統包工程CCTV網</div>
+      </div>
+    </div>
+
+    <nav class="nav">
+      <span class="active-pill">CCTV</span>
+    </nav>
+  </header>
+
+  <section class="hero">
+    <div class="hero-inner">
+      <div>
+        <div class="badge"><span class="badge-dot"></span>CCTV Live Map</div>
+        <h1>工區周邊即時影像</h1>
+        <p>點選地圖上的攝影機編號即可開啟對應即時影像。</p>
+      </div>
+    </div>
+  </section>
+
+  <main class="content">
+    <aside class="card side-card">
+      <div class="card-title"><span class="orange">📍</span> 攝影機點位</div>
+      <div class="desc">可從清單或地圖直接開啟攝影機畫面。</div>
+
+      <div class="camera-list">
+        <a class="camera-item" href="http://root:Fine2259@125.228.110.96/live/media/NVR-001/DeviceIpint.2/SourceEndpoint.video:0:1?w=640&h=480" target="_blank" rel="noopener">
+          <div class="mini-circle">2</div>
+          <div>
+            <div class="camera-name">CCTV 2</div>
+            <div class="camera-detail">點選開啟 2 即時影像</div>
+          </div>
+          <div>↗</div>
+        </a>
+
+        <a class="camera-item" href="http://root:Fine2259@125.228.110.96/live/media/NVR-001/DeviceIpint.11/SourceEndpoint.video:0:1?w=640&h=480" target="_blank" rel="noopener">
+          <div class="mini-circle">11</div>
+          <div>
+            <div class="camera-name">CCTV 11</div>
+            <div class="camera-detail">點選開啟 11 即時影像</div>
+          </div>
+          <div>↗</div>
+        </a>
+      </div>
+    </aside>
+
+    <section class="card map-card">
+      <div class="map-head">
+        <div>
+          <h2>汐東線 CCTV 點位圖</h2>
+          <p>點選白色編號圈即可開啟即時影像。</p>
+        </div>
+        <div class="live-pill">Live</div>
+      </div>
+
+      <div class="map-wrap">
+        <img src="./assets/cctv-map.png" alt="汐東線 CCTV 點位圖">
+
+        <a class="click-zone zone-2" href="http://root:Fine2259@125.228.110.96/live/media/NVR-001/DeviceIpint.2/SourceEndpoint.video:0:1?w=640&h=480" target="_blank" rel="noopener" aria-label="開啟 CCTV 2">
+          <span class="camera-bubble">開啟 CCTV 2</span>
+        </a>
+
+        <a class="click-zone zone-11" href="http://root:Fine2259@125.228.110.96/live/media/NVR-001/DeviceIpint.11/SourceEndpoint.video:0:1?w=640&h=480" target="_blank" rel="noopener" aria-label="開啟 CCTV 11">
+          <span class="camera-bubble">開啟 CCTV 11</span>
+        </a>
+      </div>
+
+      <div class="map-note">
+        <span class="info-dot">i</span>
+        若瀏覽器封鎖彈出視窗，請允許此網站開啟新分頁，或改由上方清單按鈕開啟。
+      </div>
+    </section>
+  </main>
+
+  <footer>
+    <div class="footer-inner">
+      <div>
+        <div class="footer-title">捷運汐止東湖線統包工程</div>
+        <div>主辦機關：新北市政府捷運工程局</div>
+        <div>統包團隊：馬來西亞商金務大工程 / 神通資訊科技 / 東丕營造</div>
+      </div>
+      <div class="footer-center">
+        <div>網站更新：2026 年 6 月</div>
+        <div>© 2026 汐東捷運統包工程團隊. All rights reserved.</div>
+      </div>
+      <div></div>
+    </div>
+  </footer>
+</body>
+</html>
+
